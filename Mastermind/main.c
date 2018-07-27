@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define MAX_COLOURS 4
 #define MAX_TURNS 12
@@ -10,15 +11,13 @@ typedef struct {
     int partialMatch;
 }Record;
 
-struct test{
-    int x;
-};
 
 int main(void)
 {
     int i, j, turns;
     int fullMatch, partialMatch;
     bool won = false;
+    char userInput;
 
 
     //colours are green blue red pink orange yellow white,
@@ -35,8 +34,6 @@ int main(void)
     int partialMatchPosition[MAX_COLOURS];
 
     Record prevTurns[MAX_TURNS];
-    //struct test alsoTest;
-    //alsoTest.x = 7;       delete?
 
 
     //initalise all to blanks
@@ -54,20 +51,27 @@ int main(void)
 
     //take input for code and store in 1d
 
-    printf("Please set your 4-colour code\n");
-    scanf(" %c %c %c %c", &code[0], &code[1], &code[2], &code[3]);
+    printf("Do you want to input a specific code? y/n? If not, one will be randomly generated for you.\n");
+    scanf("%c", &userInput);
 
-    printf("\nYour code was: %c %c %c %c", code[0], code[1], code[2], code[3]);
+    if(1/*userInput=='y'||userInput=='Y'*/)
+    {
+        printf("Please set your 4-colour code\n");
+        scanf(" %c %c %c %c", &code[0], &code[1], &code[2], &code[3]);
+
+        printf("\nYour code was: %c %c %c %c", code[0], code[1], code[2], code[3]);
+    }
+
 
     for(turns=0; turns<MAX_TURNS && won == false; turns++)
     {
 
         //take input for guess and store in 1d
 
-        printf("\n\nPlease input your next guess\n");
+        printf("\n\nPlease input your %s guess\n", turns==0?"first":"next");
         scanf(" %c %c %c %c", &guess[0], &guess[1], &guess[2], &guess[3]);
 
-        printf("\n\nYour guess was: %c %c %c %c", guess[0], guess[1], guess[2], guess[3]);
+        //printf("\nYour guess was: %c %c %c %c\n", guess[0], guess[1], guess[2], guess[3]);
 
 
         //determine accuracy of guess
@@ -137,9 +141,9 @@ int main(void)
 
         //print results
 
-        for(i=0; i<MAX_TURNS; i++)
+        for(i=0; i<=turns; i++)
         {
-            printf("\nFull = %d   Partial = %d\t", prevTurns[i].fullMatch, prevTurns[i].partialMatch);
+            printf("\nFull = %d   Partial = %d\t\t", prevTurns[i].fullMatch, prevTurns[i].partialMatch);
 
 
             for(j=0; j<MAX_COLOURS; j++)
