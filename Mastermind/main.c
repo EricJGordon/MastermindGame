@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
+#include <stdlib.h>
 
-#define MAX_COLOURS 4
-#define MAX_TURNS 12
+#define MAX_PEGS 4
+#define MAX_TURNS 12        //these 3 won't necessarily remain macros
+#define MAX_COLOURS 7       //may later be customisable by player
 
 typedef struct {
-    char guess[MAX_COLOURS];
+    char guess[MAX_PEGS];
     int fullMatch;
     int partialMatch;
-}Record;
+}TurnDetails;
 
 
 int main(void)
@@ -19,21 +21,24 @@ int main(void)
     bool won = false;
     char userInput;
 
+    srand(time(NULL)); // randomize seed
+
 
     //colours are green blue red pink orange yellow white,
     //each represented by their own unique first letter,
-    //Instruct player this
+    //~~Instruct player this~~
+    //TODO: Make into list/array of pointers colourList
 
     //optional: feature that lets player add in more colour possibilities
     //automatically change max turns based on this?
 
     //create arrays, 1ds and 2d
-    char code[MAX_COLOURS];
-    char guess[MAX_COLOURS];
-    int fullMatchPosition[MAX_COLOURS];
-    int partialMatchPosition[MAX_COLOURS];
+    char code[MAX_PEGS];
+    char guess[MAX_PEGS];
+    int fullMatchPosition[MAX_PEGS];
+    int partialMatchPosition[MAX_PEGS];
 
-    Record prevTurns[MAX_TURNS];
+    TurnDetails prevTurns[MAX_TURNS];
 
 
     //initalise all to blanks
@@ -43,7 +48,7 @@ int main(void)
         prevTurns[i].fullMatch = 0;
         prevTurns[i].partialMatch = 0;
 
-        for(j=0; j<MAX_COLOURS; j++)
+        for(j=0; j<MAX_PEGS; j++)
         {
             prevTurns[i].guess[j] = ' ';
         }
@@ -52,16 +57,24 @@ int main(void)
     //take input for code and store in 1d
 
     printf("Do you want to input a specific code? y/n? If not, one will be randomly generated for you.\n");
-    scanf("%c", &userInput);
+    scanf(" %c", &userInput);
 
-    if(1/*userInput=='y'||userInput=='Y'*/)
+    if(userInput=='y'||userInput=='Y')
     {
         printf("Please set your 4-colour code\n");
         scanf(" %c %c %c %c", &code[0], &code[1], &code[2], &code[3]);
 
         printf("\nYour code was: %c %c %c %c", code[0], code[1], code[2], code[3]);
     }
-
+    else if(userInput=='n'||userInput=='N')
+    {
+        for(i=0; i<MAX_PEGS;i++)
+        {
+            int colourNum = rand()%MAX_COLOURS;
+            //code[i] = colourList[colourNum][0];
+        }
+    }
+  //  else    printf("Invalid response. Please try again using 'y' or 'n'.");
 
     for(turns=0; turns<MAX_TURNS && won == false; turns++)
     {
@@ -90,7 +103,7 @@ int main(void)
 
         fullMatch = 0;
 
-        for(i=0; i<MAX_COLOURS; i++)
+        for(i=0; i<MAX_PEGS; i++)
         {
             //if so, record position and quantity of matches
             if(guess[i]==code[i])
@@ -104,9 +117,9 @@ int main(void)
 
         partialMatch = 0;
 
-        for(i=0; i<MAX_COLOURS; i++)
+        for(i=0; i<MAX_PEGS; i++)
         {
-            for(j=0; j<MAX_COLOURS; j++)
+            for(j=0; j<MAX_PEGS; j++)
             {
                 if(guess[i]==code[j]						//compares all to all by default
                    &&j!=fullMatchPosition[0]&&j!=fullMatchPosition[1]&&j!=fullMatchPosition[2]&&j!=fullMatchPosition[3]			//exclude previously recorded full matches
@@ -146,7 +159,7 @@ int main(void)
             printf("\nFull = %d   Partial = %d\t\t", prevTurns[i].fullMatch, prevTurns[i].partialMatch);
 
 
-            for(j=0; j<MAX_COLOURS; j++)
+            for(j=0; j<MAX_PEGS; j++)
             {
                 printf("%c ", prevTurns[i].guess[j]);
             }
