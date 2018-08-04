@@ -21,15 +21,15 @@ int main(void)
     bool won = false;
     char userInput;
 
-    srand(time(NULL)); // randomize seed
+    srand((unsigned int) time(NULL)); // randomize seed
 
+    //(unsigned int) is included to avoid a warning about incidentally casting a type time_t to unsigned int
 
     //colours are green blue red pink orange yellow white,
     //each represented by their own unique first letter,
     //~~Instruct player this~~
-    //TODO: Make into list/array of pointers colourList
 
-    //optional: feature that lets player add in more colour possibilities
+    //optional: feature that lets player add in more colour possibilities       probably involves malloc?
     //automatically change max turns based on this?
 
     //create arrays, 1ds and 2d
@@ -39,6 +39,13 @@ int main(void)
     int partialMatchPosition[MAX_PEGS];
 
     TurnDetails prevTurns[MAX_TURNS];
+
+    char *colourList[]={"green", "blue", "red", "pink", "orange", "yellow", "white"};   //still need to doublecheck if these are the real colours
+
+    //player colours are added to either existing ones or new empty set, depending on preference expressed
+    //simplest to keep existing array as is and use additional one for new colours
+    //need to check with existing array and other new colours to make sure no two first letters are the same
+    //maybe simpler to only record first letters?
 
 
     //initalise all to blanks
@@ -54,7 +61,7 @@ int main(void)
         }
     }
 
-    //take input for code and store in 1d
+    //take input for code and store in 1d array
 
     printf("Do you want to input a specific code? y/n? If not, one will be randomly generated for you.\n");
     scanf(" %c", &userInput);
@@ -71,12 +78,16 @@ int main(void)
         for(i=0; i<MAX_PEGS;i++)
         {
             int colourNum = rand()%MAX_COLOURS;
-            //code[i] = colourList[colourNum][0];
+            code[i] = colourList[colourNum][0];
         }
     }
-  //  else    printf("Invalid response. Please try again using 'y' or 'n'.");
+    else
+    {
+        printf("Invalid response. Please try again using 'y' or 'n'.");
+        return 0;       //change to while loop until valid input
+    }
 
-    for(turns=0; turns<MAX_TURNS && won == false; turns++)
+    for(turns=0; turns<MAX_TURNS && !won; turns++)
     {
 
         //take input for guess and store in 1d
@@ -174,10 +185,14 @@ int main(void)
 
     if(won==true)
     {
-        printf("...");
+        printf("\n\nCongratulations! You won!\n");
     }
     else
-        printf("...");
+    {
+        printf("\n\nBetter luck next time.\n");
+    }
+
+    printf("The code was: %c %c %c %c\n", code[0], code[1], code[2], code[3]);
 
     return 0;
 }
