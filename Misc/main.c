@@ -10,6 +10,19 @@ double twoDecs(double n)
     return (int)(n*100)/100.0;
 }
 
+int gcd(int a, int b)       //courtesy of Stack Overflow
+{                           //needed for Prob538
+    int temp;
+    while (b != 0)
+    {
+        temp = a % b;
+
+        a = b;
+        b = temp;
+    }
+    return a;
+}
+
 char* Prob538(double target, int n)
 {
     int i, j, closesti = 1, closestj = 1, iter = 0;
@@ -25,17 +38,17 @@ char* Prob538(double target, int n)
             printf("\n %d/%d", j, i);
 
             if(i==1&&j==1)
-                printf("WEIRD!");       //why isn't this triggering/isn't 1/1 being printed above?9
+                printf("Print, Damn you!");       //why isn't this triggering/isn't 1/1 being printed above?
 
 
-            if((fmod((double)i/j, 1)!=0 || j==1 )&&fabs(target - (double)j/i) < fabs(target - closest))
-            {                                  //first condition to avoid checking (and changing answer to) redundant fractions like 2/4, 3/9
-                printf("(New closest)");       //second condition to make sure first condition doesn't wrongly rule out fractions with 1 as
-                                               //their numerator, such as 1/2, 1/3, etc.
+            if(gcd(i,j)==1 && fabs(target - (double)j/i) < fabs(target - closest))
+            {                                  //first condition to avoid checking (and changing answer to)
+                printf("(New closest)");       //redundant fractions like 2/4, 3/9, 8/10
+                                               //i.e. any numerator and denominator that aren't relatively prime
                 closestj = j;
-                closesti = i;                   //still not perfect - 79.47% results in 8 in 10 instead of 4 in 5
-                closest = (double)j/i;          //TODO: create/look for highest common factor function?
-            }                                   //only catches cases where i is a whole number multiple of j
+                closesti = i;
+                closest = (double)j/i;
+            }
 
             iter++;
         }
@@ -57,7 +70,7 @@ char* Prob538(double target, int n)
 
         tooLow = diff > 0 ? true : false;
 
-        if ((fmod((double)i/j, 1)!=0 || j==1 )&&fabs(diff) < fabs(target - closest))
+        if (gcd(i,j)==1 &&fabs(diff) < fabs(target - closest))
         {
             printf(" \t(New closest)");
 
@@ -70,11 +83,11 @@ char* Prob538(double target, int n)
 
 
 
-        while(tooLow&&i<10)     //&&i<10 to prevent cases where it gives the final fraction out of a higher number as a result,
-                                //such as 73.66% giving 8 in 11 instead of 3 in 4
+        while(tooLow&&i<10)     //&&i<10 to prevent cases where it gives the final fraction out of a higher number
+                                //as a result, such as 73.66% giving 8 in 11 instead of 3 in 4
         {
-           j++;   //j++ here instead of end of a for loop because even when it already went over the target,
-           i++;            // it would still increment, meaning it would always increment one too many times            Is Comment still relevant?
+           j++;
+           i++;
 
             printf("\nInner Loop: %d/%d", j, i);
 
@@ -82,7 +95,7 @@ char* Prob538(double target, int n)
 
             tooLow = diff > 0 ? true : false;
 
-            if((fmod((double)i/j, 1)!=0 || j==1 )&&fabs(diff) < fabs(target - closest))
+            if(gcd(i,j)==1 &&fabs(diff) < fabs(target - closest))
             {
                 printf(" \t(New closest)");
 
@@ -120,6 +133,8 @@ char* Prob538(double target, int n)
     return buffer;
 }
 
+
+
 int main(void)
 {
     srand((unsigned int)time(NULL));
@@ -134,7 +149,8 @@ int main(void)
         double newNum = (double) (num % 10000) / 100;       //to put in form xx.yy  e.g. 73.56%
         printf("\n%.2lf%%", newNum);
 
-        printf("\n%s \n", Prob538(newNum, 10));
+        printf("\n%s \n", Prob538(79.47, 10));
     }
+
     return 0;
 }
